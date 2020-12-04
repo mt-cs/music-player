@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<style>
+.btn-group button {
+  background-color: CadetBlue; /* Green background */
+  border: 1px SlateGray; /* Green border */
+  color: white; /* White text */
+  padding: 10px 24px; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
+  float: left; /* Float the buttons side by side */
+}
+
+/* Clear floats (clearfix hack) */
+.btn-group:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.btn-group button:not(:last-child) {
+  border-right: none; /* Prevent double borders */
+}
+
+/* Add a background color on hover */
+.btn-group button:hover {
+  background-color: PaleTurquoise;
+}
+</style>
+
+<head>
+    <title>Beat Play</title>
+</head>
+
+<body>
+<div style="color:SlateGray;padding:20px;">
+    <h1>BEAT PLAY</h1>
+    <em>Real music for real stories.</em></br></br>
+    <img src="images/homepage_music.jpg" alt="a pink and blue headphone" style="width:100%" >
+    <h2>Choose to Show, Add, Delete, or Play Song:</h2>
+
+    <div class="btn-group" style="width:100%">
+        <button onclick="location.href='http://localhost:8081/showAllSongs'" style="width:25%">SHOW</button>
+        <button onclick="location.href='http://localhost:8081/add'" style="width:25%">ADD</button>
+        <button onclick="location.href='http://localhost:8081/delete'" style="width:25%">DELETE</button>
+        <button onclick="location.href='http://localhost:8081/play'" style="width:25%">PLAY</button>
+    </div>
+</div>
+</body>
+</html>
