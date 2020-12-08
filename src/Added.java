@@ -21,7 +21,7 @@ public class Added extends HttpServlet {
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
             ResultSet rs = statement.executeQuery("SELECT * FROM songs WHERE name='" + song + "';");
-            if (rs.getRow() != 0) {
+            if (rs.next()) {
                 return false;
             } else {
                 ResultSet rs2 = statement.executeQuery("SELECT COUNT (*) as 'count' FROM songs;");

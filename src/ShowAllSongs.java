@@ -19,16 +19,16 @@ public class ShowAllSongs extends HttpServlet {
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
             ResultSet rs = statement.executeQuery("select songs.id, songs.name, artists.artists_name, albums.albums_name from albums " +
                     "inner join artists on albums.artists_id = artists.id inner join songs on songs.albums_id = albums.id;");
-            while ( rs.next() ) {
+            while (rs.next()) {
                 int id = rs.getInt("id");
                 String sName = rs.getString("name");
                 String albumName = rs.getString("albums_name");
-                String artistName = rs.getString("artists_name");
-                sb.append("<tr><td>").append(id)
-                        .append("</td><td><input name=\"song_name\" value='").append(sName).append("' disabled></input>")
-                        .append("</td><td><input name=\"album_name\" value='").append(albumName).append("' disabled></input>")
-                        .append("</td><td><input name=\"artist_name\" value='").append(artistName).append("' disabled></input></td>")
-                        .append("<td><input type = \"submit\" value=\"ADD\"/></td></tr>");
+                String artistName = rs.getString("artists_name"); // use a label in html
+                sb.append("<tr><form action=\"/playlist\" method=\"POST\"><td>").append(id)
+                        .append("</td><td><input name=\"song_name\" value='").append(sName).append("'></input>")
+                        .append("</td><td><input name=\"album_name\" value='").append(albumName).append("'></input>")
+                        .append("</td><td><input name=\"artist_name\" value='").append(artistName).append("'></input></td>")
+                        .append("<td><input type = \"submit\" value=\"ADD\"/></td></form></tr>");
             }
         }
         catch(SQLException e)
@@ -91,15 +91,15 @@ public class ShowAllSongs extends HttpServlet {
                     "</style>" +
                     "<div style=\"color:SlateGray;padding:20px;\"><h2>" +
                     cookieVal +
-                    "'s Songs: </h2><form action=\"/playlist\" method=\"POST\"><table><tr>\n" +
+                    "'s Songs: </h2><table><tr>\n" +
                     "    <th>ID</th>\n" +
-                    "    <th>SONG NAME</th>\n" +
+                    "    <th>TITLE</th>\n" +
                     "    <th>ALBUM</th>\n" +
                     "    <th>ARTIST</th>\n" +
                     "    <th>PLAYLIST</th>\n" +
                     "  </tr>" +
                     songDB() +
-                    "</table></form></div></body></html>";
+                    "</table></div></body></html>";
             out.println(sb);
         } else {
             response.sendRedirect("/login");

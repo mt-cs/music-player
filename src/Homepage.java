@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,14 +15,35 @@ import java.util.Scanner;
  */
 
 public class Homepage extends HttpServlet {
-    Library myLibrary;
-
     /**
-     * Initialize library
+     * Get a request and generate a response
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @throws IOException for file not found
      */
-    public void init(){
-        myLibrary = new Library();
-        myLibrary.readFromFile("/Users/marisatania/IdeaProjects/lab-7-mt-cs/src/Test");
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        // Get cookie
+        Cookie[] cookies = request.getCookies();
+        String cookieVal = "";
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equalsIgnoreCase("name")) {
+                cookieVal = cookie.getValue();
+            }
+        }
+
+        // Show library
+        StringBuilder sb = get_html(cookieVal);
+
+        // Set response content type
+        response.setContentType("text/html");
+
+        PrintWriter out = response.getWriter();
+        String content = getContent();
+
+        out.println(content);
+        out.println(sb.toString());
     }
 
     /**
@@ -42,8 +64,7 @@ public class Homepage extends HttpServlet {
         return result.toString();
     }
 
-    public StringBuilder lib_html(String cookieVal){
-        ArrayList<Song> allSongs = myLibrary.getSongs();
+    public StringBuilder get_html(String cookieVal){
         StringBuilder sb = new StringBuilder();
         sb.append("<style>\n" +
                 "table {\n" +
@@ -61,45 +82,57 @@ public class Homepage extends HttpServlet {
                 "tr:nth-child(even) {\n" +
                 "  background-color: #dddddd;\n" +
                 "}\n" +
-                "</style>");
-        sb.append("<div style=\"color:SlateGray;padding:20px;\"><h2>");
-        sb.append(cookieVal);
-        sb.append("'s Playlist: </h2><table>");
-        for (Song song : allSongs) {
-            sb.append(song.toHTML());
-        }
-        sb.append("</table></div>");
+                "</style>")
+        .append("<div style=\"color:SlateGray;padding:20px;\"><h2>")
+        .append(cookieVal)
+        .append("'s Playlist:")
+        .append("</h2><table><tr><th>ID</th><th>TITLE</th><th>ALBUM</th><th>ARTIST</th></tr>")
+        .append(playlistDB())
+        .append("</table></div>");
         return sb;
     }
 
-    /**
-     * Get a request and generate a response
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @throws IOException for file not found
-     */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    public StringBuilder playlistDB(){
+        StringBuilder sb = new StringBuilder();
 
-        // Get cookie
-        Cookie[] cookies = request.getCookies();
-        String cookieVal = "";
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equalsIgnoreCase("name")) {
-                cookieVal = cookie.getValue();
+        Connection connection = null;
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection("jdbc:sqlite:music.db");
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+            ResultSet rs = statement.executeQuery("SELECT * FROM playlist");
+            while ( rs.next() ) {
+                int id = rs.getInt("id");
+                String sName = rs.getString("song_name");
+                String albumName = rs.getString("albums_name");
+                String artistName = rs.getString("artists_name"); // use a label in html
+                sb.append("<tr><td>").append(id)
+                        .append("</td><td>").append(sName)
+                        .append("</td><td>").append(albumName)
+                        .append("</td><td>").append(artistName).append("</td></tr>");
             }
         }
-
-        // Show library
-        StringBuilder sb = lib_html(cookieVal);
-
-        // Set response content type
-        response.setContentType("text/html");
-
-        PrintWriter out = response.getWriter();
-        String content = getContent();
-
-        out.println(content);
-        out.println(sb.toString());
+        catch(SQLException e)
+        {
+            System.err.println(e.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                if(connection != null)
+                    connection.close();
+            }
+            catch(SQLException e)
+            {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return sb;
     }
+
+
 }
