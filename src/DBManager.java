@@ -25,7 +25,6 @@ public class DBManager {
                 // read the result set
                 System.out.println("name = " + rs.getString("name"));
                 System.out.println("id = " + rs.getInt("id"));
-
             }
         }
         catch(SQLException e)

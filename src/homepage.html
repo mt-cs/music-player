@@ -28,6 +28,8 @@
 </style>
 
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <title>Beat Play</title>
 </head>
 
@@ -35,9 +37,11 @@
 <div style="color:SlateGray;padding:20px;">
     <h1>BEAT PLAY</h1>
     <em>Real music for real stories.</em></br></br>
+    <form action="/search" method="GET">
+        <input type="text" placeholder="Search.." name="search">
+        <button type="submit"><i class="fa fa-search"></i></button>
+    </form>
     <img src="images/homepage_music.jpg" alt="a pink and blue headphone" style="width:100%" >
-    <h2>Choose to Show, Add, Delete, or Play Song:</h2>
-
     <div class="btn-group" style="width:100%">
         <button onclick="location.href='http://localhost:8081/showAllSongs'" style="width:25%">SHOW</button>
         <button onclick="location.href='http://localhost:8081/add'" style="width:25%">ADD</button>

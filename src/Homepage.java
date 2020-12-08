@@ -64,7 +64,7 @@ public class Homepage extends HttpServlet {
                 "</style>");
         sb.append("<div style=\"color:SlateGray;padding:20px;\"><h2>");
         sb.append(cookieVal);
-        sb.append("'s Library: </h2><table>");
+        sb.append("'s Playlist: </h2><table>");
         for (Song song : allSongs) {
             sb.append(song.toHTML());
         }

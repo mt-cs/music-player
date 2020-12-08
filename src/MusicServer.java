@@ -24,15 +24,16 @@ public class MusicServer {
 
         ResourceHandler rHandler = new ResourceHandler();
         rHandler.setDirectoriesListed(true);
-        rHandler.setResourceBase("/Users/marisatania/IdeaProjects/lab-7-mt-cs/content");
+        rHandler.setResourceBase("/Users/marisatania/IdeaProjects/project-3-music-player-mt-cs/content");
 
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(new ServletHolder(new BeatLogin()), "/login");
         handler.addServletWithMapping(new ServletHolder(new LoginServlet()), "/postLogin");
         handler.addServletWithMapping(new ServletHolder(new Homepage()), "/homepage");
+        handler.addServletWithMapping(new ServletHolder(new SearchServlet()), "/search");
         handler.addServletWithMapping(new ServletHolder(new ShowAllSongs()), "/showAllSongs");
+        handler.addServletWithMapping(new ServletHolder(new PlaylistServlet()), "/playlist");
         handler.addServletWithMapping(new ServletHolder(new DeleteServlet()), "/delete");
-        handler.addServletWithMapping(new ServletHolder(new DeleteConfirm()), "/confirmDelete");
         handler.addServletWithMapping(new ServletHolder(new Deleted()), "/deleted");
         handler.addServletWithMapping(new ServletHolder(new AddServlet()), "/add");
         handler.addServletWithMapping(new ServletHolder(new Added()), "/added");
@@ -40,9 +41,7 @@ public class MusicServer {
 
         hList.setHandlers(new Handler[] {rHandler, handler});
         server.setHandler(hList);
-
         server.start();
         server.join();
     }
-
 }

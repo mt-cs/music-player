@@ -24,14 +24,15 @@ public class ShowAllSongs extends HttpServlet {
                 String sName = rs.getString("name");
                 String albumName = rs.getString("albums_name");
                 String artistName = rs.getString("artists_name");
-                sb.append("<tr><td>").append(id).append("</td><td>").append(sName).append("</td><td>")
-                        .append(albumName).append("</td><td>").append(artistName).append("</td></tr>");
+                sb.append("<tr><td>").append(id)
+                        .append("</td><td><input name=\"song_name\" value='").append(sName).append("' disabled></input>")
+                        .append("</td><td><input name=\"album_name\" value='").append(albumName).append("' disabled></input>")
+                        .append("</td><td><input name=\"artist_name\" value='").append(artistName).append("' disabled></input></td>")
+                        .append("<td><input type = \"submit\" value=\"ADD\"/></td></tr>");
             }
         }
         catch(SQLException e)
         {
-            // if the error message is "out of memory",
-            // it probably means no database file is found
             System.err.println(e.getMessage());
         }
         finally
@@ -66,11 +67,11 @@ public class ShowAllSongs extends HttpServlet {
         }
 
         if (!cookieVal.equals("")){
-            // Show allSongs
-
-            // Set response content type
             response.setContentType("text/html");
-            String sb = "<!DOCTYPE html><html><title>ALL SONG</title><body>" +
+            String sb = "<!DOCTYPE html><html><head>" +
+                    "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css\"" +
+                    " integrity=\"sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2\" crossorigin=\"anonymous\">"+
+                    "</head><title>ALL SONG</title><body>" +
                     "<style>\n" +
                     "table {\n" +
                     "  font-family: arial, sans-serif;\n" +
@@ -90,14 +91,15 @@ public class ShowAllSongs extends HttpServlet {
                     "</style>" +
                     "<div style=\"color:SlateGray;padding:20px;\"><h2>" +
                     cookieVal +
-                    "'s Songs: </h2><table><tr>\n" +
+                    "'s Songs: </h2><form action=\"/playlist\" method=\"POST\"><table><tr>\n" +
                     "    <th>ID</th>\n" +
                     "    <th>SONG NAME</th>\n" +
                     "    <th>ALBUM</th>\n" +
                     "    <th>ARTIST</th>\n" +
+                    "    <th>PLAYLIST</th>\n" +
                     "  </tr>" +
                     songDB() +
-                    "</table></div></body></html>";
+                    "</table></form></div></body></html>";
             out.println(sb);
         } else {
             response.sendRedirect("/login");
