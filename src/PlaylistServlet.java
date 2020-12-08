@@ -51,10 +51,10 @@ public class PlaylistServlet extends HttpServlet {
         String resp;
 
         if (addPlaylist(song, artist, album)){
-            resp = "<br><b> <div style=\"color:SlateGray;padding-left:20px;\">" +
+            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
                     song + ", " + album + " by " + artist + " has been added to your playlist.<br></br>";
         } else {
-            resp = "<br><b> <div style=\"color:SlateGray;padding-left:20px;\">" +
+            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
                     song + " already exists.<br></br>";
         }
         resp += "<button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button></div></b>";

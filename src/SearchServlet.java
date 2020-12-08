@@ -51,7 +51,7 @@ public class SearchServlet extends HttpServlet {
         return false;
     }
 
-    public StringBuilder searchDB(String search){
+    public StringBuilder searchDB(String search, String column){
         StringBuilder sb = new StringBuilder();
         Connection connection = null;
         try
@@ -62,7 +62,7 @@ public class SearchServlet extends HttpServlet {
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
             ResultSet rs = statement.executeQuery("select songs.name, artists.artists_name, albums.albums_name from albums " +
                     "inner join artists on albums.artists_id = artists.id inner join songs on songs.albums_id = albums.id " +
-                    "WHERE songs.name='" + search + "';");
+                    "WHERE " + column + "='" + search + "';");
             while (rs.next()) {
                 String sName = rs.getString("name");
                 String albumName = rs.getString("albums_name");
@@ -115,7 +115,9 @@ public class SearchServlet extends HttpServlet {
                 .append("<div style=\"color:SlateGray;padding:20px;\"><h2>")
                 .append("Showing Songs for: ").append(search)
                 .append("</h2><table><tr><th>TITLE</th><th>ALBUM</th><th>ARTIST</th></tr>")
-                .append(searchDB(search))
+                .append(searchDB(search,"songs.name"))
+                .append(searchDB(search,"albums.albums_name"))
+                .append(searchDB(search,"artists.artists_name"))
                 .append("</table><br><button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button></div>");
         return sb;
     }

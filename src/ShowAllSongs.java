@@ -25,9 +25,9 @@ public class ShowAllSongs extends HttpServlet {
                 String albumName = rs.getString("albums_name");
                 String artistName = rs.getString("artists_name"); // use a label in html
                 sb.append("<tr><form action=\"/playlist\" method=\"POST\"><td>").append(id)
-                        .append("</td><td><input name=\"song_name\" value='").append(sName).append("'></input>")
-                        .append("</td><td><input name=\"album_name\" value='").append(albumName).append("'></input>")
-                        .append("</td><td><input name=\"artist_name\" value='").append(artistName).append("'></input></td>")
+                        .append("</td><td>").append(sName).append("<input name=\"song_name\" value='").append(sName).append("' style='visibility:hidden'></input>")
+                        .append("</td><td>").append(albumName).append("<input name=\"album_name\" value='").append(albumName).append("' style='visibility:hidden'></input>")
+                        .append("</td><td>").append(artistName).append("<input name=\"artist_name\" value='").append(artistName).append("' style='visibility:hidden'></input></td>")
                         .append("<td><input type = \"submit\" value=\"ADD\"/></td></form></tr>");
             }
         }
@@ -65,7 +65,6 @@ public class ShowAllSongs extends HttpServlet {
                 cookieVal = cookie.getValue();
             }
         }
-
         if (!cookieVal.equals("")){
             response.setContentType("text/html");
             String sb = "<!DOCTYPE html><html><head>" +
