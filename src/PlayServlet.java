@@ -47,7 +47,6 @@ public class PlayServlet extends HttpServlet {
                 String sName = rs.getString("name");
                 String fileName = rs.getString("file_name");
                 sb.append("<li><a href=\"songs/").append(fileName).append("\">").append(sName).append("</a> </li>\n");
-                sb.append("<audio src=\"songs/").append(fileName).append("\" controls id=\"audioPlayer\">\nYour browser does not support the audio element.\n</audio>");
             }
         }
         catch(SQLException e)
@@ -67,7 +66,32 @@ public class PlayServlet extends HttpServlet {
                 System.err.println(e.getMessage());
             }
         }
-        sb.append("</ul>").append("<button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button>\n" +
+        sb.append("</ul><script src=\"https://code.jquery.com/jquery-2.2.0.js\"></script>\n" +
+                "    <script src=\"audioPlayer.js\"></script>\n" +
+                "    <script>\n" +
+                "        audioPlayer();\n" +
+                "        function audioPlayer(){\n" +
+                "            $(\"#audioPlayer\")[0].src = $(\"#playlist li a\")[0];\n" +
+                "        }    \n" +"$(\"#playlist li a\").click(function(e){\n" +
+                "        e.preventDefault();\n" +
+                "        $(\"#audioPlayer\")[0].src = this;\n" +
+                "        $(\"#audioPlayer\")[0].play();\n" +
+                "        $(\"#playlist li\").removeClass(\"current-song\");\n" +
+                "        currentSong = $(this).parent().index();\n" +
+                "        $(this).parent().addClass(\"current-song\");\n" +
+                "    });\n" +
+                "\n" +
+                "    $(\"#audioPlayer\")[0].addEventListener(\"ended\", function(){\n" +
+                "        currentSong++;\n" +
+                "        if(currentSong == $(\"#playlist li a\").length)\n" +
+                "            currentSong = 0;\n" +
+                "        $(\"#playlist li\").removeClass(\"current-song\");\n" +
+                "        $(\"#playlist li:eq(\"+currentSong+\")\").addClass(\"current-song\");\n" +
+                "        $(\"#audioPlayer\")[0].src = $(\"#playlist li a\")[currentSong].href;\n" +
+                "        $(\"#audioPlayer\")[0].play();\n" +
+                "    });"+
+                "    </script>")
+                .append("<button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button>\n" +
                 "</div>\n" +
                 "</body>\n" +
                 "</html>");
