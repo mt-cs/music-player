@@ -9,10 +9,18 @@ import java.io.PrintWriter;
 import java.sql.*;
 import java.util.Scanner;
 
+/**
+ * Show all song from songs table in music.db
+ */
 public class ShowAllSongs extends HttpServlet {
+    /**
+     * Handle a GET request
+     * @param request HttpServletRequest request
+     * @param response HttpServletResponse response
+     * @throws IOException failed or interrupted I/O operations
+     */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
@@ -33,6 +41,11 @@ public class ShowAllSongs extends HttpServlet {
         }
     }
 
+    /**
+     * html codes
+     * @param cookieVal String username
+     * @return sb string
+     */
     public String get_html(String cookieVal){
         String sb = "<!DOCTYPE html><html><head>" +
                 "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css\"" +
@@ -69,6 +82,10 @@ public class ShowAllSongs extends HttpServlet {
         return sb;
     }
 
+    /**
+     * Get all songs from the songs table in music db
+     * @return sb, StringBuilder of the html code
+     */
     public StringBuilder songDB(){
         StringBuilder sb = new StringBuilder();
 

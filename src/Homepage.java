@@ -7,19 +7,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Homepage Servlet after login
  */
-
 public class Homepage extends HttpServlet {
     /**
      * Get a request and generate a response
      * @param request HttpServletRequest
      * @param response HttpServletResponse
-     * @throws IOException for file not found
+     * @throws IOException for failed or interrupted I/O operations
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -64,6 +62,11 @@ public class Homepage extends HttpServlet {
         return result.toString();
     }
 
+    /**
+     * html codes
+     * @param cookieVal String username
+     * @return sb StringBuilder consisting of the html code
+     */
     public StringBuilder get_html(String cookieVal){
         StringBuilder sb = new StringBuilder();
         sb.append("<style>\n" +
@@ -92,6 +95,10 @@ public class Homepage extends HttpServlet {
         return sb;
     }
 
+    /**
+     * Get playlist table from the music.db and return a html table
+     * @return sb StringBuilder
+     */
     public StringBuilder playlistDB(){
         StringBuilder sb = new StringBuilder();
 
@@ -133,6 +140,4 @@ public class Homepage extends HttpServlet {
         }
         return sb;
     }
-
-
 }

@@ -1,4 +1,5 @@
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,30 +22,41 @@ public class Deleted extends HttpServlet {
      * Read a request and generate a response
      * @param request HttpServletRequest
      * @param response HttpServletResponse
-     * @throws IOException for file not found
+     * @throws IOException for failed or interrupted I/O operations
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Header
-        PrintWriter out = response.getWriter();
-        out.println(getContent("src/beat_header.html"));
-        out.println(getContent("src/deleted.html"));
-
-        // Body
-        songName = request.getParameter("sname");
-        artistName = request.getParameter("aname");
-        artistID = getArtistID(artistName);
-
-        response.setContentType("text/html");
-        StringBuilder sb = new StringBuilder();
-        sb.append("<div style=\"color:SlateGray;padding-left:20px;\">");
-        if (deleteSongDB(songName, artistName)){
-            sb.append(songName).append(" by ").append(artistName).append(" has been deleted.<br></br>");
-        } else {
-            sb.append(songName).append(" by ").append(artistName).append(" doesn't exist.<br></br>");
+        Cookie[] cookies = request.getCookies();
+        String cookieVal = "";
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equalsIgnoreCase("name")) {
+                cookieVal = cookie.getValue();
+            }
         }
-        String resp = "<br><b>" + sb.toString() + "</b></div>";
-        out.println(resp);
+        if (!cookieVal.equals("")){
+            PrintWriter out = response.getWriter();
+            //Header
+            out.println(getContent("src/beat_header.html"));
+            out.println(getContent("src/deleted.html"));
+
+            // Body
+            songName = request.getParameter("sname");
+            artistName = request.getParameter("aname");
+            artistID = getArtistID(artistName);
+
+            response.setContentType("text/html");
+            StringBuilder sb = new StringBuilder();
+            sb.append("<div style=\"color:SlateGray;padding-left:20px;\">");
+            if (deleteSongDB(songName, artistName)){
+                sb.append(songName).append(" by ").append(artistName).append(" has been deleted.<br></br>");
+            } else {
+                sb.append(songName).append(" by ").append(artistName).append(" doesn't exist.<br></br>");
+            }
+            String resp = "<br><b>" + sb.toString() + "</b></div>";
+            out.println(resp);
+        } else {
+            response.sendRedirect("/login");
+        }
     }
 
     /**
@@ -64,6 +76,11 @@ public class Deleted extends HttpServlet {
         return result.toString();
     }
 
+    /**
+     * Get artist id
+     * @param artistName String artist name
+     * @return get_id int of artist id
+     */
     public int getArtistID(String artistName) {
         int get_id = 0;
         Connection connection = null;
@@ -98,6 +115,12 @@ public class Deleted extends HttpServlet {
         return get_id;
     }
 
+    /**
+     * Delete song from the songs table in music.db
+     * @param song String song name
+     * @param artistName String artist name
+     * @return true if song is deleted, false if song doesn't exist
+     */
     public Boolean deleteSongDB(String song, String artistName){
         Connection connection = null;
         try

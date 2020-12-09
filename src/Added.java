@@ -1,3 +1,4 @@
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,29 +20,47 @@ public class Added extends HttpServlet {
      * Read a request and generate a response
      * @param request HttpServletRequest
      * @param response HttpServletResponse
-     * @throws IOException for file not found
+     * @throws IOException for failed or interrupted I/O operations
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String song = request.getParameter("sname");
-        String artist = request.getParameter("aname");
-        String album = request.getParameter("album");
-        String resp;
-        this.artist_id = checkDB(artist, "artists_name", "artists");
-        this.albums_id = checkDB(album, "albums_name", "albums");
-        if (addSongDB(song, artist_id, albums_id)){
-            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
-                    song + ", " + album + " by " + artist + " has been added.<br></br></div></b>";
-        } else {
-            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
-                    song + " already exists.<br></br></div></b>";
+        Cookie[] cookies = request.getCookies();
+        String cookieVal = "";
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equalsIgnoreCase("name")) {
+                cookieVal = cookie.getValue();
+            }
         }
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
-        out.println(getContent());
-        out.println(resp);
+        if (!cookieVal.equals("")){
+            String song = request.getParameter("sname");
+            String artist = request.getParameter("aname");
+            String album = request.getParameter("album");
+            String resp;
+            this.artist_id = checkDB(artist, "artists_name", "artists");
+            this.albums_id = checkDB(album, "albums_name", "albums");
+            if (addSongDB(song, artist_id, albums_id)){
+                resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
+                        song + ", " + album + " by " + artist + " has been added.<br></br></div></b>";
+            } else {
+                resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
+                        song + " already exists.<br></br></div></b>";
+            }
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.println(getContent());
+            out.println(resp);
+        } else {
+            response.sendRedirect("/login");
+        }
     }
 
+    /**
+     * Add song in music.db's songs table
+     * @param song String song name
+     * @param artistID int artist ID
+     * @param albumID int album ID
+     * @return true if song is added, false if song doesn't exist
+     */
     public Boolean addSongDB(String song, int artistID, int albumID){
         Connection connection = null;
         try

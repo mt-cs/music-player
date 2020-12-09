@@ -35,7 +35,7 @@ public class BeatLogin extends HttpServlet {
      * Get a request and generate a response
      * @param request HttpServletRequest
      * @param response HttpServletResponse
-     * @throws IOException for file not found
+     * @throws IOException for failed or interrupted I/O operations
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {

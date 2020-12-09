@@ -1,4 +1,5 @@
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,21 +10,33 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 /**
- * Add song
+ * Shows form asking for user input to add song
  */
 public class AddServlet extends HttpServlet {
     /**
      * Get a request and generate a response
      * @param request HttpServletRequest
      * @param response HttpServletResponse
-     * @throws IOException for file not found
+     * @throws IOException for failed or interrupted I/O operations
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println(getContent("beat_header.html"));
-        out.println(getContent("add.html"));
+        // The servlet should check the cookie to make sure the user is logged in.
+        Cookie[] cookies = request.getCookies();
+        String cookieVal = "";
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equalsIgnoreCase("name")) {
+                cookieVal = cookie.getValue();
+            }
+        }
+        if (!cookieVal.equals("")){
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.println(getContent("beat_header.html"));
+            out.println(getContent("add.html"));
+        } else {
+            response.sendRedirect("/login");
+        }
     }
 
     /**

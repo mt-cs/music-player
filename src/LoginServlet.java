@@ -15,6 +15,35 @@ import java.util.Scanner;
 
 public class LoginServlet extends HttpServlet {
     /**
+     * The loginServlet's doPost method opens up musicDb and check the provided password against what is stored.
+     * If this is a match, return the user a page with a list of all the songs in their DB.
+     * If it is not, send them back to login.html, with a message indicating that they were not successful.
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @throws IOException for file not found
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        // get login info
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        // Open database
+        if (openDB(username, password)){
+            Cookie cookie = new Cookie("name", username);
+            cookie.setMaxAge(60*60*24);
+            response.addCookie(cookie);
+            response.sendRedirect("/homepage");
+        } else {
+            String content = getContent("src/login.html");
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.println(content);
+            out.println("<div style=\"color:SlateGray;padding-left:20px;\"><p><i>Login failed: Incorrect username or password, try again.</i></p></div>");
+        }
+    }
+
+    /**
      * Get content from HTML file
      * @return result.toString()
      */
@@ -32,6 +61,12 @@ public class LoginServlet extends HttpServlet {
         return result.toString();
     }
 
+    /**
+     * Open music.db users table
+     * @param username String
+     * @param password String
+     * @return true if password input matched the password in the database
+     */
     public boolean openDB(String username, String password) {
         String pwd = "";
         Connection connection = null;
@@ -63,36 +98,5 @@ public class LoginServlet extends HttpServlet {
             }
         }
         return pwd.equals(password);
-    }
-
-    /**
-     * The loginServlet's doPost method should open up your SQLite DB and check the provided password against what is stored.
-     * If this is a match, return the user a page with a list of all the songs in their DB.
-     * If it is not, send them back to login.html, with a message indicating that they were not successful.
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @throws IOException for file not found
-     */
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-
-        // get login info
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        // Open database
-        if (openDB(username, password)){
-            Cookie cookie = new Cookie("name", username);
-            cookie.setMaxAge(60*60*24);
-            response.addCookie(cookie);
-            response.sendRedirect("/homepage");
-        } else {
-            String content = getContent("src/login.html");
-            out.println(content);
-            out.println("<div style=\"color:SlateGray;padding-left:20px;\"><p><i>Login failed: Incorrect username or password, try again.</i></p></div>");
-        }
     }
 }

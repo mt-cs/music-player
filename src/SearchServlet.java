@@ -9,52 +9,44 @@ import java.io.PrintWriter;
 import java.sql.*;
 import java.util.Scanner;
 
+/**
+ * Search songs in the music.db by song name, artist name, and album name
+ */
 public class SearchServlet extends HttpServlet {
+    /**
+     * Get a request and generate a response
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @throws IOException for failed or interrupted I/O operations
+     */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        String search = request.getParameter("search");
-        StringBuilder resp = get_html(search);
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
-        out.println(getContent());
-        out.println(resp.toString());
+        Cookie[] cookies = request.getCookies();
+        String cookieVal = "";
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equalsIgnoreCase("name")) {
+                cookieVal = cookie.getValue();
+            }
+        }
+        if (!cookieVal.equals("")){
+            response.setContentType("text/html");
+            String search = request.getParameter("search");
+            StringBuilder resp = get_html(search);
+            PrintWriter out = response.getWriter();
+            response.setContentType("text/html");
+            out.println(getContent());
+            out.println(resp.toString());
+        } else {
+            response.sendRedirect("/login");
+        }
     }
 
-    public boolean checkDB(String data, String column, String table) {
-        Connection connection = null;
-        try
-        {
-            // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:music.db");
-            Statement statement = connection.createStatement();
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-            ResultSet rs = statement.executeQuery("SELECT * FROM " + table + " WHERE " + column + "='" + data + "';");
-            if (rs.next()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        catch(SQLException e)
-        {
-            System.err.println(e.getMessage());
-        }
-        finally
-        {
-            try
-            {
-                if(connection != null)
-                    connection.close();
-            }
-            catch(SQLException e)
-            {
-                // connection close failed.
-                System.err.println(e.getMessage());
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Search for song name, artist name and album name
+     * @param search String search input
+     * @param column String column that wants to be searched
+     * @return
+     */
     public StringBuilder searchDB(String search, String column){
         StringBuilder sb = new StringBuilder();
         Connection connection = null;

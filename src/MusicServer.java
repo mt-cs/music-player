@@ -14,7 +14,6 @@ public class MusicServer {
 
     /**
      * Function that starts the server with correct servlets
-     *
      * @throws Exception throws exception if access failed
      */
     public static void main(String[] args) throws Exception {
