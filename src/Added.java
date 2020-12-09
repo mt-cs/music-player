@@ -1,9 +1,12 @@
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.Scanner;
 
 /**
  * confirm add servlet
@@ -11,6 +14,33 @@ import java.sql.*;
 public class Added extends HttpServlet {
     int artist_id;
     int albums_id;
+
+    /**
+     * Read a request and generate a response
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @throws IOException for file not found
+     */
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String song = request.getParameter("sname");
+        String artist = request.getParameter("aname");
+        String album = request.getParameter("album");
+        String resp;
+        this.artist_id = checkDB(artist, "artists_name", "artists");
+        this.albums_id = checkDB(album, "albums_name", "albums");
+        if (addSongDB(song, artist_id, albums_id)){
+            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
+                    song + ", " + album + " by " + artist + " has been added.<br></br></div></b>";
+        } else {
+            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
+                    song + " already exists.<br></br></div></b>";
+        }
+        PrintWriter out = response.getWriter();
+        response.setContentType("text/html");
+        out.println(getContent());
+        out.println(resp);
+    }
 
     public Boolean addSongDB(String song, int artistID, int albumID){
         Connection connection = null;
@@ -92,32 +122,22 @@ public class Added extends HttpServlet {
         }
         return get_id;
     }
+
     /**
-     * Read a request and generate a response
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @throws IOException for file not found
+     * Get content from HTML file
+     * @return result.toString()
      */
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    public String getContent() {
+        StringBuilder result = new StringBuilder();
+        try {
+            Scanner sc = new Scanner(new File("src/beat_header.html"));
 
-        String song = request.getParameter("sname");
-        String artist = request.getParameter("aname");
-        String album = request.getParameter("album");
-        String resp;
-        this.artist_id = checkDB(artist, "artists_name", "artists");
-        this.albums_id = checkDB(album, "albums_name", "albums");
-        if (addSongDB(song, artist_id, albums_id)){
-            resp = "<br><b> <div style=\"color:SlateGray;padding-left:20px;\">" +
-                    song + ", " + album + " by " + artist + " has been added<br></br>";
-        } else {
-            resp = "<br><b> <div style=\"color:SlateGray;padding-left:20px;\">" +
-                    song + " already exists.<br></br>";
+            while (sc.hasNextLine()) {
+                result.append(sc.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
         }
-        resp += "<button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button></div></b>";
-
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
-        out.println(resp);
+        return result.toString();
     }
 }

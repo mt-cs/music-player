@@ -18,23 +18,6 @@ public class Deleted extends HttpServlet {
     int artistID;
 
     /**
-     * Get content from HTML file
-     * @return result.toString()
-     */
-    public String getContent(String path) {
-        StringBuilder result = new StringBuilder();
-        try {
-            Scanner sc = new Scanner(new File(path));
-            while (sc.hasNextLine()) {
-                result.append(sc.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        return result.toString();
-    }
-
-    /**
      * Read a request and generate a response
      * @param request HttpServletRequest
      * @param response HttpServletResponse
@@ -44,8 +27,8 @@ public class Deleted extends HttpServlet {
             throws ServletException, IOException {
         //Header
         PrintWriter out = response.getWriter();
-        String header = getContent("src/deleted.html");
-        out.println(header);
+        out.println(getContent("src/beat_header.html"));
+        out.println(getContent("src/deleted.html"));
 
         // Body
         songName = request.getParameter("sname");
@@ -60,11 +43,25 @@ public class Deleted extends HttpServlet {
         } else {
             sb.append(songName).append(" by ").append(artistName).append(" doesn't exist.<br></br>");
         }
-        String resp = "<br><b>" + sb.toString()
-                + "</b><br><button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button>\n</div>";
-
+        String resp = "<br><b>" + sb.toString() + "</b></div>";
         out.println(resp);
+    }
 
+    /**
+     * Get content from HTML file
+     * @return result.toString()
+     */
+    public String getContent(String path) {
+        StringBuilder result = new StringBuilder();
+        try {
+            Scanner sc = new Scanner(new File(path));
+            while (sc.hasNextLine()) {
+                result.append(sc.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
+        return result.toString();
     }
 
     public int getArtistID(String artistName) {

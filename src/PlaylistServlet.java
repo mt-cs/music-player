@@ -1,11 +1,37 @@
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.Scanner;
 
 public class PlaylistServlet extends HttpServlet {
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        String song = request.getParameter("song_name");
+        String artist = request.getParameter("artist_name");
+        String album = request.getParameter("album_name");
+        String resp;
+
+        if (addPlaylist(song, artist, album)){
+            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
+                    song + ", " + album + " by " + artist + " has been added to your playlist.<br></br>";
+        } else {
+            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
+                    song + " already exists.<br></br>";
+        }
+        resp += "<button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button></div></b>";
+
+        PrintWriter out = response.getWriter();
+        response.setContentType("text/html");
+        out.println(getContent("beat_header.html"));
+        out.println(resp);
+    }
+
     public boolean addPlaylist(String song, String artist, String album){
         Connection connection = null;
         try
@@ -42,25 +68,21 @@ public class PlaylistServlet extends HttpServlet {
         return false;
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    /**
+     * Get content from HTML file
+     * @return result.toString()
+     */
+    public String getContent(String filename) {
+        StringBuilder result = new StringBuilder();
+        try {
+            Scanner sc = new Scanner(new File("src/" + filename));
 
-        String song = request.getParameter("song_name");
-        String artist = request.getParameter("artist_name");
-        String album = request.getParameter("album_name");
-        String resp;
-
-        if (addPlaylist(song, artist, album)){
-            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
-                    song + ", " + album + " by " + artist + " has been added to your playlist.<br></br>";
-        } else {
-            resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
-                    song + " already exists.<br></br>";
+            while (sc.hasNextLine()) {
+                result.append(sc.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
         }
-        resp += "<button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button></div></b>";
-
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
-        out.println(resp);
+        return result.toString();
     }
 }

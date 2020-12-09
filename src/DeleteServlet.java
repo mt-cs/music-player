@@ -9,13 +9,27 @@ import java.util.Scanner;
 
 public class DeleteServlet extends HttpServlet {
     /**
+     * Get a request and generate a response
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @throws IOException for file not found
+     */
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println(getContent("beat_header.html"));
+        out.println(getContent("delete.html"));
+    }
+
+    /**
      * Get content from HTML file
      * @return result.toString()
      */
-    public String getContent() {
+    public String getContent(String filename) {
         StringBuilder result = new StringBuilder();
         try {
-            Scanner sc = new Scanner(new File("src/delete.html"));
+            Scanner sc = new Scanner(new File("src/" + filename));
 
             while (sc.hasNextLine()) {
                 result.append(sc.nextLine());
@@ -25,23 +39,4 @@ public class DeleteServlet extends HttpServlet {
         }
         return result.toString();
     }
-
-    /**
-     * Get a request and generate a response
-     * @param request HttpServletRequest
-     * @param response HttpServletResponse
-     * @throws IOException for file not found
-     */
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        // Set response content type
-        response.setContentType("text/html");
-
-        PrintWriter out = response.getWriter();
-        String content = getContent();
-
-        out.println(content);
-    }
-
 }

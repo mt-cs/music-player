@@ -85,7 +85,7 @@ public class Homepage extends HttpServlet {
                 "</style>")
         .append("<div style=\"color:SlateGray;padding:20px;\"><h2>")
         .append(cookieVal)
-        .append("'s Playlist:")
+        .append("'s playlist:")
         .append("</h2><table><tr><th>ID</th><th>TITLE</th><th>ALBUM</th><th>ARTIST</th></tr>")
         .append(playlistDB())
         .append("</table></div>");

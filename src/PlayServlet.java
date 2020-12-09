@@ -21,15 +21,11 @@ public class PlayServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String content = getContent();
-        StringBuilder rs = getFile();
-        // Set response content type
         response.setContentType("text/html");
-
         PrintWriter out = response.getWriter();
-        out.println(content);
-        out.println(rs.toString());
-
+        out.println(getContent("beat_header.html"));
+        out.println(getContent("audioPlayer.html"));
+        out.println(getFile().toString());
     }
 
     public StringBuilder getFile(){
@@ -79,9 +75,7 @@ public class PlayServlet extends HttpServlet {
                 "        $(\"#playlist li\").removeClass(\"current-song\");\n" +
                 "        currentSong = $(this).parent().index();\n" +
                 "        $(this).parent().addClass(\"current-song\");\n" +
-                "    });\n" +
-                "\n" +
-                "    $(\"#audioPlayer\")[0].addEventListener(\"ended\", function(){\n" +
+                "    });\n$(\"#audioPlayer\")[0].addEventListener(\"ended\", function(){\n" +
                 "        currentSong++;\n" +
                 "        if(currentSong == $(\"#playlist li a\").length)\n" +
                 "            currentSong = 0;\n" +
@@ -89,12 +83,7 @@ public class PlayServlet extends HttpServlet {
                 "        $(\"#playlist li:eq(\"+currentSong+\")\").addClass(\"current-song\");\n" +
                 "        $(\"#audioPlayer\")[0].src = $(\"#playlist li a\")[currentSong].href;\n" +
                 "        $(\"#audioPlayer\")[0].play();\n" +
-                "    });"+
-                "    </script>")
-                .append("<button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button>\n" +
-                "</div>\n" +
-                "</body>\n" +
-                "</html>");
+                "    });</script></div></body></html>");
         return sb;
     }
 
@@ -102,10 +91,10 @@ public class PlayServlet extends HttpServlet {
      * Get content from HTML file
      * @return result.toString()
      */
-    public String getContent() {
+    public String getContent(String filename) {
         StringBuilder result = new StringBuilder();
         try {
-            Scanner sc = new Scanner(new File("src/audioPlayer.html"));
+            Scanner sc = new Scanner(new File("src/" + filename));
 
             while (sc.hasNextLine()) {
                 result.append(sc.nextLine());
@@ -115,6 +104,4 @@ public class PlayServlet extends HttpServlet {
         }
         return result.toString();
     }
-
-
 }

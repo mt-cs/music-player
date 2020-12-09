@@ -2,9 +2,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.Scanner;
 
 public class SearchServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -13,6 +16,7 @@ public class SearchServlet extends HttpServlet {
         StringBuilder resp = get_html(search);
         PrintWriter out = response.getWriter();
         response.setContentType("text/html");
+        out.println(getContent());
         out.println(resp.toString());
     }
 
@@ -93,6 +97,24 @@ public class SearchServlet extends HttpServlet {
         return sb;
     }
 
+    /**
+     * Get content from HTML file
+     * @return result.toString()
+     */
+    public String getContent() {
+        StringBuilder result = new StringBuilder();
+        try {
+            Scanner sc = new Scanner(new File("src/beat_header.html"));
+
+            while (sc.hasNextLine()) {
+                result.append(sc.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
+        return result.toString();
+    }
+
     public StringBuilder get_html(String search){
         StringBuilder sb = new StringBuilder();
         sb.append("<style>\n" +
@@ -113,12 +135,12 @@ public class SearchServlet extends HttpServlet {
                 "}\n" +
                 "</style>")
                 .append("<div style=\"color:SlateGray;padding:20px;\"><h2>")
-                .append("Showing Songs for: ").append(search)
+                .append("showing songs for: ").append(search)
                 .append("</h2><table><tr><th>TITLE</th><th>ALBUM</th><th>ARTIST</th></tr>")
                 .append(searchDB(search,"songs.name"))
                 .append(searchDB(search,"albums.albums_name"))
                 .append(searchDB(search,"artists.artists_name"))
-                .append("</table><br><button onclick=\"location.href='http://localhost:8081/homepage'\">Homepage</button></div>");
+                .append("</table></div>");
         return sb;
     }
 }

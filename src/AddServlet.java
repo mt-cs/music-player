@@ -13,23 +13,6 @@ import java.util.Scanner;
  */
 public class AddServlet extends HttpServlet {
     /**
-     * Get content from HTML file
-     * @return result.toString()
-     */
-    public String getContent() {
-        StringBuilder result = new StringBuilder();
-        try {
-            Scanner sc = new Scanner(new File("src/add.html"));
-            while (sc.hasNextLine()) {
-                result.append(sc.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        return result.toString();
-    }
-
-    /**
      * Get a request and generate a response
      * @param request HttpServletRequest
      * @param response HttpServletResponse
@@ -37,13 +20,27 @@ public class AddServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        // Set response content type
         response.setContentType("text/html");
-
         PrintWriter out = response.getWriter();
-        String content = getContent();
+        out.println(getContent("beat_header.html"));
+        out.println(getContent("add.html"));
+    }
 
-        out.println(content);
+    /**
+     * Get content from HTML file
+     * @return result.toString()
+     */
+    public String getContent(String filename) {
+        StringBuilder result = new StringBuilder();
+        try {
+            Scanner sc = new Scanner(new File("src/" + filename));
+
+            while (sc.hasNextLine()) {
+                result.append(sc.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
+        return result.toString();
     }
 }
