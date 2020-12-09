@@ -42,47 +42,6 @@ public class ShowAllSongs extends HttpServlet {
     }
 
     /**
-     * html codes
-     * @param cookieVal String username
-     * @return sb string
-     */
-    public String get_html(String cookieVal){
-        String sb = "<!DOCTYPE html><html><head>" +
-                "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css\"" +
-                " integrity=\"sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2\" crossorigin=\"anonymous\">"+
-                "</head><title>ALL SONG</title><body>" +
-                "<style>\n" +
-                "table {\n" +
-                "  font-family: arial, sans-serif;\n" +
-                "  border-collapse: collapse;\n" +
-                "  width: 100%;\n" +
-                "}\n" +
-                "\n" +
-                "td, th {\n" +
-                "  border: 1px solid #dddddd;\n" +
-                "  text-align: left;\n" +
-                "  padding: 8px;\n" +
-                "}\n" +
-                "\n" +
-                "tr:nth-child(even) {\n" +
-                "  background-color: #dddddd;\n" +
-                "}\n" +
-                "</style>" +
-                "<div style=\"color:SlateGray;padding:20px;\"><h2>" +
-                cookieVal +
-                "'s songs: </h2><table><tr>\n" +
-                "    <th>ID</th>\n" +
-                "    <th>TITLE</th>\n" +
-                "    <th>ALBUM</th>\n" +
-                "    <th>ARTIST</th>\n" +
-                "    <th>PLAYLIST</th>\n" +
-                "  </tr>" +
-                songDB().toString() +
-                "</table></div></body></html>";
-        return sb;
-    }
-
-    /**
      * Get all songs from the songs table in music db
      * @return sb, StringBuilder of the html code
      */
@@ -128,6 +87,46 @@ public class ShowAllSongs extends HttpServlet {
             }
         }
         return sb;
+    }
+
+    /**
+     * html codes
+     * @param cookieVal String username
+     * @return sb string
+     */
+    public String get_html(String cookieVal){
+        return "<!DOCTYPE html><html><head>" +
+                "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css\"" +
+                " integrity=\"sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2\" crossorigin=\"anonymous\">"+
+                "</head><title>ALL SONG</title><body>" +
+                "<style>\n" +
+                "table {\n" +
+                "  font-family: arial, sans-serif;\n" +
+                "  border-collapse: collapse;\n" +
+                "  width: 100%;\n" +
+                "}\n" +
+                "\n" +
+                "td, th {\n" +
+                "  border: 1px solid #dddddd;\n" +
+                "  text-align: left;\n" +
+                "  padding: 8px;\n" +
+                "}\n" +
+                "\n" +
+                "tr:nth-child(even) {\n" +
+                "  background-color: #dddddd;\n" +
+                "}\n" +
+                "</style>" +
+                "<div style=\"color:SlateGray;padding:20px;\"><h2>" +
+                cookieVal +
+                "'s songs. </h2><table><tr>\n" +
+                "    <th>ID</th>\n" +
+                "    <th>TITLE</th>\n" +
+                "    <th>ALBUM</th>\n" +
+                "    <th>ARTIST</th>\n" +
+                "    <th>PLAYLIST</th>\n" +
+                "  </tr>" +
+                songDB().toString() +
+                "</table></div></body></html>";
     }
 
     /**

@@ -37,6 +37,7 @@ public class MusicServer {
         handler.addServletWithMapping(new ServletHolder(new AddServlet()), "/add");
         handler.addServletWithMapping(new ServletHolder(new Added()), "/added");
         handler.addServletWithMapping(new ServletHolder(new PlayServlet()), "/play");
+        handler.addServletWithMapping(new ServletHolder(new BioServlet()), "/biography");
 
         hList.setHandlers(new Handler[] {rHandler, handler});
         server.setHandler(hList);

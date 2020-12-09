@@ -45,7 +45,7 @@ public class SearchServlet extends HttpServlet {
      * Search for song name, artist name and album name
      * @param search String search input
      * @param column String column that wants to be searched
-     * @return
+     * @return sb StringBuilder
      */
     public StringBuilder searchDB(String search, String column){
         StringBuilder sb = new StringBuilder();
@@ -107,6 +107,11 @@ public class SearchServlet extends HttpServlet {
         return result.toString();
     }
 
+    /**
+     * get html codes
+     * @param search data to be searched
+     * @return sb StringBuilder
+     */
     public StringBuilder get_html(String search){
         StringBuilder sb = new StringBuilder();
         sb.append("<style>\n" +

@@ -1,4 +1,3 @@
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,7 @@ public class PlayServlet extends HttpServlet {
      * @throws IOException for failed or interrupted I/O operations
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
         Cookie[] cookies = request.getCookies();
         String cookieVal = "";
         for (Cookie cookie : cookies) {
@@ -46,7 +45,6 @@ public class PlayServlet extends HttpServlet {
         Connection connection = null;
         try
         {
-            // create a database connection
             connection = DriverManager.getConnection("jdbc:sqlite:music.db");
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
@@ -74,7 +72,16 @@ public class PlayServlet extends HttpServlet {
                 System.err.println(e.getMessage());
             }
         }
-        sb.append("</ul><script src=\"https://code.jquery.com/jquery-2.2.0.js\"></script>\n" +
+        sb.append(javascript());
+        return sb;
+    }
+
+    /**
+     * Javacript code to play music on click
+     * @return string of codes
+     */
+    public String javascript(){
+        return "</ul><script src=\"https://code.jquery.com/jquery-2.2.0.js\"></script>\n" +
                 "    <script src=\"audioPlayer.js\"></script>\n" +
                 "    <script>\n" +
                 "        audioPlayer();\n" +
@@ -95,8 +102,7 @@ public class PlayServlet extends HttpServlet {
                 "        $(\"#playlist li:eq(\"+currentSong+\")\").addClass(\"current-song\");\n" +
                 "        $(\"#audioPlayer\")[0].src = $(\"#playlist li a\")[currentSong].href;\n" +
                 "        $(\"#audioPlayer\")[0].play();\n" +
-                "    });</script></div></body></html>");
-        return sb;
+                "    });</script></div></body></html>";
     }
 
     /**
