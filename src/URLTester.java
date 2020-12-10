@@ -17,10 +17,22 @@ import java.util.Scanner;
  * (You'll need to open a separate URLConnection, read the results, and then hand that string to your JSON parser.)
  */
 public class URLTester {
+    /**
+     * Get url from the audioDB website
+     * @param artist String artist name
+     * @return url String
+     */
     public static String getAPI(String artist){
         return "https://theaudiodb.com/api/v1/json/1/search.php?s=" + artist;
     }
 
+    /**
+     * Return biography result from the website
+     * @param artistName String artist name
+     * @return bio StringBuilder
+     * @throws IOException for failed or interrupted I/O operations
+     * @throws ParseException for failed or interrupted Parse operations
+     */
     public static StringBuilder audioDB(String artistName) throws IOException, ParseException {
         String urlString = getAPI(artistName);
         URL u = null;

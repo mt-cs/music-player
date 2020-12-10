@@ -24,10 +24,14 @@ public class AddServlet extends HttpServlet {
         // The servlet should check the cookie to make sure the user is logged in.
         Cookie[] cookies = request.getCookies();
         String cookieVal = "";
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equalsIgnoreCase("name")) {
-                cookieVal = cookie.getValue();
+        if (cookies != null){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equalsIgnoreCase("name")) {
+                    cookieVal = cookie.getValue();
+                }
             }
+        } else {
+            response.sendRedirect("/login");
         }
         if (!cookieVal.equals("")){
             response.setContentType("text/html");

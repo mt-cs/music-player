@@ -23,10 +23,14 @@ public class SearchServlet extends HttpServlet {
             throws IOException {
         Cookie[] cookies = request.getCookies();
         String cookieVal = "";
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equalsIgnoreCase("name")) {
-                cookieVal = cookie.getValue();
+        if (cookies != null){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equalsIgnoreCase("name")) {
+                    cookieVal = cookie.getValue();
+                }
             }
+        } else {
+            response.sendRedirect("/login");
         }
         if (!cookieVal.equals("")){
             response.setContentType("text/html");
@@ -108,11 +112,60 @@ public class SearchServlet extends HttpServlet {
     }
 
     /**
+     * Search for song name, artist name and album name
+     * @param search String search input
+     * @param column String column that wants to be searched
+     * @return sb StringBuilder
+     */
+    public String getArtistName(String search, String column){
+        String artistName = "";
+        Connection connection = null;
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection("jdbc:sqlite:music.db");
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);  // set timeout to 30 sec.
+            ResultSet rs = statement.executeQuery("select songs.name, artists.artists_name, albums.albums_name from albums " +
+                    "inner join artists on albums.artists_id = artists.id inner join songs on songs.albums_id = albums.id " +
+                    "WHERE " + column + "='" + search + "';");
+            if (rs.next()) {
+                artistName = rs.getString("artists_name");
+            }
+        }
+        catch(SQLException e)
+        {
+            System.err.println(e.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                if(connection != null)
+                    connection.close();
+            }
+            catch(SQLException e)
+            {
+                // connection close failed.
+                System.err.println(e.getMessage());
+            }
+        }
+        return artistName;
+    }
+
+    /**
      * get html codes
      * @param search data to be searched
      * @return sb StringBuilder
      */
     public StringBuilder get_html(String search){
+        String artist_name = getArtistName(search, "songs.name");
+        if (artist_name.equals("")){
+            artist_name = getArtistName(search, "albums.albums_name");
+            if (artist_name.equals("")){
+                artist_name = search;
+            }
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("<style>\n" +
                 "table {\n" +
@@ -131,9 +184,12 @@ public class SearchServlet extends HttpServlet {
                 "  background-color: #dddddd;\n" +
                 "}\n" +
                 "</style>")
-                .append("<div style=\"color:SlateGray;padding:20px;\"><h2>")
-                .append("showing songs for: ").append(search)
-                .append("</h2><table><tr><th>TITLE</th><th>ALBUM</th><th>ARTIST</th></tr>")
+                .append("<div style=\"color:SlateGray;padding:20px;\">")
+                .append("<form action=\"/biography\" method=\"GET\">")
+                .append("<table><tr><td><h2>showing songs for: ").append(search).append("</h2></td>")
+                .append("<input name=\"artist_name\" value='").append(artist_name).append("' style='visibility:hidden'></input>")
+                .append("<td><input type = \"submit\" value=\"GET BIO\"/></form></td></table>")
+                .append("<table><tr><th>TITLE</th><th>ALBUM</th><th>ARTIST</th></tr>")
                 .append(searchDB(search,"songs.name"))
                 .append(searchDB(search,"albums.albums_name"))
                 .append(searchDB(search,"artists.artists_name"))

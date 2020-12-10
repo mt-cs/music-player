@@ -23,11 +23,16 @@ public class PlaylistServlet extends HttpServlet {
             throws IOException {
         Cookie[] cookies = request.getCookies();
         String cookieVal = "";
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equalsIgnoreCase("name")) {
-                cookieVal = cookie.getValue();
+        if (cookies != null){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equalsIgnoreCase("name")) {
+                    cookieVal = cookie.getValue();
+                }
             }
+        } else {
+            response.sendRedirect("/login");
         }
+
         if (!cookieVal.equals("")){
             String song = request.getParameter("song_name");
             String artist = request.getParameter("artist_name");
