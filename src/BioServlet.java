@@ -3,7 +3,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,29 +22,20 @@ public class BioServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        Cookie[] cookies = request.getCookies();
-        String cookieVal = "";
-        if (cookies != null){
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equalsIgnoreCase("name")) {
-                    cookieVal = cookie.getValue();
-                }
-            }
-        } else {
-            response.sendRedirect("/login");
-        }
+        BaseServlet bs = new BaseServlet();
+        String cookieVal = bs.getCookie(request, response);
         if (!cookieVal.equals("")){
             response.setContentType("text/html");
             String search = request.getParameter("artist_name");
-            String html = null;
+            String html = bs.get_html_style();
             try {
-                html = get_html(search).toString();
+                html += get_html(search).toString();
             } catch (ParseException e) {
                 e.printStackTrace();
             }
             PrintWriter out = response.getWriter();
             response.setContentType("text/html");
-            out.println(getContent("beat_header.html"));
+            out.println(bs.getContent("beat_header.html"));
             out.println(html);
         } else {
             response.sendRedirect("/login");
@@ -59,45 +49,11 @@ public class BioServlet extends HttpServlet {
      */
     public StringBuilder get_html(String search) throws IOException, ParseException {
         StringBuilder sb = new StringBuilder();
-        sb.append("<style>\n" +
-                "table {\n" +
-                "  font-family: arial, sans-serif;\n" +
-                "  border-collapse: collapse;\n" +
-                "  width: 100%;\n" +
-                "}\n" +
-                "\n" +
-                "td, th {\n" +
-                "  border: 1px solid #dddddd;\n" +
-                "  text-align: left;\n" +
-                "  padding: 8px;\n" +
-                "}\n" +
-                "\n" +
-                "tr:nth-child(even) {\n" +
-                "  background-color: #dddddd;\n" +
-                "}\n" +
-                "</style>")
-                .append("<div style=\"color:SlateGray;padding:20px;\"><h2>")
+        sb.append("<h2>")
                 .append(search)
                 .append("</h2><br><p>").append(audioDB(search).toString())
                 .append("</p></div>");
         return sb;
-    }
-
-    /**
-     * Get content from HTML file
-     * @return result.toString()
-     */
-    public String getContent(String filename) {
-        StringBuilder result = new StringBuilder();
-        try {
-            Scanner sc = new Scanner(new File("src/" + filename));
-            while (sc.hasNextLine()) {
-                result.append(sc.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        return result.toString();
     }
 
     /**

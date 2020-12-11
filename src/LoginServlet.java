@@ -13,7 +13,7 @@ import java.util.Scanner;
  * Login servlet for the music library
  */
 
-public class LoginServlet extends HttpServlet {
+public class LoginServlet extends BaseServlet {
     /**
      * The loginServlet's doPost method opens up musicDb and check the provided password against what is stored.
      * If this is a match, return the user a page with a list of all the songs in their DB.
@@ -35,30 +35,11 @@ public class LoginServlet extends HttpServlet {
             response.addCookie(cookie);
             response.sendRedirect("/homepage");
         } else {
-            String content = getContent("src/login.html");
             response.setContentType("text/html");
             PrintWriter out = response.getWriter();
-            out.println(content);
+            out.println(getContent("login.html"));
             out.println("<div style=\"color:SlateGray;padding-left:20px;\"><p><i>Login failed: Incorrect username or password, try again.</i></p></div>");
         }
-    }
-
-    /**
-     * Get content from HTML file
-     * @return result.toString()
-     */
-    public String getContent(String filename) {
-        StringBuilder result = new StringBuilder();
-        try {
-            Scanner sc = new Scanner(new File(filename)); //
-
-            while (sc.hasNextLine()) {
-                result.append(sc.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        return result.toString();
     }
 
     /**
@@ -68,35 +49,8 @@ public class LoginServlet extends HttpServlet {
      * @return true if password input matched the password in the database
      */
     public boolean openDB(String username, String password) {
-        String pwd = "";
-        Connection connection = null;
-        try
-        {
-            // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:music.db");
-            Statement statement = connection.createStatement();
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-            String rs_str = "select * from users where username = '"+ username + "'";
-            ResultSet rs = statement.executeQuery(rs_str);
-            pwd = rs.getString("password");
-        }
-        catch(SQLException e)
-        {
-            System.err.println(e.getMessage());
-        }
-        finally
-        {
-            try
-            {
-                if(connection != null)
-                    connection.close();
-            }
-            catch(SQLException e)
-            {
-                // connection close failed.
-                System.err.println(e.getMessage());
-            }
-        }
+        String query = "select * from users where username = '"+ username + "'";
+        String pwd = getString(query, "password");
         return pwd.equals(password);
     }
 }

@@ -1,18 +1,13 @@
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-import java.util.Scanner;
 
 /**
  * Show all song from songs table in music.db
  */
-public class ShowAllSongs extends HttpServlet {
+public class ShowAllSongs extends BaseServlet {
     /**
      * Handle a GET request
      * @param request HttpServletRequest request
@@ -21,23 +16,10 @@ public class ShowAllSongs extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-
-        // The servlet should check the cookie to make sure the user is logged in.
-        Cookie[] cookies = request.getCookies();
-        String cookieVal = "";
-        if (cookies != null){
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equalsIgnoreCase("name")) {
-                    cookieVal = cookie.getValue();
-                }
-            }
-        } else {
-            response.sendRedirect("/login");
-        }
+        String cookieVal = getCookie(request, response);
         if (!cookieVal.equals("")){
             response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
             out.println(getContent("beat_header.html"));
             out.println(get_html(cookieVal));
         } else {
@@ -103,24 +85,8 @@ public class ShowAllSongs extends HttpServlet {
                 "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css\"" +
                 " integrity=\"sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2\" crossorigin=\"anonymous\">"+
                 "</head><title>ALL SONG</title><body>" +
-                "<style>\n" +
-                "table {\n" +
-                "  font-family: arial, sans-serif;\n" +
-                "  border-collapse: collapse;\n" +
-                "  width: 100%;\n" +
-                "}\n" +
-                "\n" +
-                "td, th {\n" +
-                "  border: 1px solid #dddddd;\n" +
-                "  text-align: left;\n" +
-                "  padding: 8px;\n" +
-                "}\n" +
-                "\n" +
-                "tr:nth-child(even) {\n" +
-                "  background-color: #dddddd;\n" +
-                "}\n" +
-                "</style>" +
-                "<div style=\"color:SlateGray;padding:20px;\"><h2>" +
+                get_html_style() +
+                "<h2>" +
                 cookieVal +
                 "'s songs. </h2><table><tr>\n" +
                 "    <th>ID</th>\n" +
@@ -131,23 +97,5 @@ public class ShowAllSongs extends HttpServlet {
                 "  </tr>" +
                 songDB().toString() +
                 "</table></div></body></html>";
-    }
-
-    /**
-     * Get content from HTML file
-     * @return result.toString()
-     */
-    public String getContent(String filename) {
-        StringBuilder result = new StringBuilder();
-        try {
-            Scanner sc = new Scanner(new File("src/" + filename));
-
-            while (sc.hasNextLine()) {
-                result.append(sc.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        return result.toString();
     }
 }

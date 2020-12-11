@@ -1,18 +1,13 @@
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-import java.util.Scanner;
 
 /**
  * PlayServlet that reads HTML audioPlayer
  */
-public class PlayServlet extends HttpServlet {
+public class PlayServlet extends BaseServlet {
     /**
      * Get a request and generate a response
      * @param request HttpServletRequest
@@ -21,17 +16,7 @@ public class PlayServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        Cookie[] cookies = request.getCookies();
-        String cookieVal = "";
-        if (cookies != null){
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equalsIgnoreCase("name")) {
-                    cookieVal = cookie.getValue();
-                }
-            }
-        } else {
-            response.sendRedirect("/login");
-        }
+        String cookieVal = getCookie(request, response);
         if (!cookieVal.equals("")){
             response.setContentType("text/html");
             PrintWriter out = response.getWriter();
@@ -107,23 +92,5 @@ public class PlayServlet extends HttpServlet {
                 "        $(\"#audioPlayer\")[0].src = $(\"#playlist li a\")[currentSong].href;\n" +
                 "        $(\"#audioPlayer\")[0].play();\n" +
                 "    });</script></div></body></html>";
-    }
-
-    /**
-     * Get content from HTML file
-     * @return result.toString()
-     */
-    public String getContent(String filename) {
-        StringBuilder result = new StringBuilder();
-        try {
-            Scanner sc = new Scanner(new File("src/" + filename));
-
-            while (sc.hasNextLine()) {
-                result.append(sc.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        return result.toString();
     }
 }

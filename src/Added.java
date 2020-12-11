@@ -1,18 +1,13 @@
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-import java.util.Scanner;
 
 /**
  * confirm add servlet
  */
-public class Added extends HttpServlet {
+public class Added extends BaseServlet {
     int artist_id;
     int albums_id;
 
@@ -24,20 +19,14 @@ public class Added extends HttpServlet {
      */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        Cookie[] cookies = request.getCookies();
-        String cookieVal = "";
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equalsIgnoreCase("name")) {
-                cookieVal = cookie.getValue();
-            }
-        }
+        String cookieVal = getCookie(request, response);
         if (!cookieVal.equals("")){
             String song = request.getParameter("sname");
             String artist = request.getParameter("aname");
             String album = request.getParameter("album");
             String resp;
-            this.artist_id = checkDB(artist, "artists_name", "artists");
-            this.albums_id = checkDB(album, "albums_name", "albums");
+            this.artist_id = updateDB(artist, "artists_name", "artists");
+            this.albums_id = updateDB(album, "albums_name", "albums");
             if (addSongDB(song, artist_id, albums_id)){
                 resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
                         song + ", " + album + " by " + artist + " has been added.<br></br></div></b>";
@@ -47,7 +36,7 @@ public class Added extends HttpServlet {
             }
             response.setContentType("text/html");
             PrintWriter out = response.getWriter();
-            out.println(getContent());
+            out.println(getContent("beat_header.html"));
             out.println(resp);
         } else {
             response.sendRedirect("/login");
@@ -62,44 +51,19 @@ public class Added extends HttpServlet {
      * @return true if song is added, false if song doesn't exist
      */
     public Boolean addSongDB(String song, int artistID, int albumID){
-        Connection connection = null;
-        try
-        {
-            // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:music.db");
-            Statement statement = connection.createStatement();
-            statement.setQueryTimeout(30);  // set timeout to 30 sec.
-            ResultSet rs = statement.executeQuery("SELECT * FROM songs WHERE name='" + song + "';");
-            if (rs.next()) {
-                return false;
-            } else {
-                ResultSet rs2 = statement.executeQuery("SELECT COUNT (*) as 'count' FROM songs;");
-                int id = rs2.getInt("count") + 1;
-                statement.executeUpdate("insert into songs values ("+ id +", '" + song + "', " + albumID + ", " + artistID + ");");
-                return true;
-            }
-        }
-        catch(SQLException e)
-        {
-            System.err.println(e.getMessage());
-        }
-        finally
-        {
-            try
-            {
-                if(connection != null)
-                    connection.close();
-            }
-            catch(SQLException e)
-            {
-                // connection close failed.
-                System.err.println(e.getMessage());
-            }
-        }
-        return false;
+        String query = "SELECT * FROM songs WHERE name='" + song + "';";
+        String update = "insert into songs (name, albums_id, artists_id) values ('" + song + "', " + albumID + ", " + artistID + ");";
+        return checkDB(query, update);
     }
 
-    public int checkDB(String data, String column, String table) {
+    /**
+     * Add into  db if data doesn't exists
+     * @param data String
+     * @param column String
+     * @param table String
+     * @return get_id;
+     */
+    public int updateDB(String data, String column, String table) {
         int get_id = 0;
         Connection connection = null;
         try
@@ -140,23 +104,5 @@ public class Added extends HttpServlet {
             }
         }
         return get_id;
-    }
-
-    /**
-     * Get content from HTML file
-     * @return result.toString()
-     */
-    public String getContent() {
-        StringBuilder result = new StringBuilder();
-        try {
-            Scanner sc = new Scanner(new File("src/beat_header.html"));
-
-            while (sc.hasNextLine()) {
-                result.append(sc.nextLine());
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        return result.toString();
     }
 }
