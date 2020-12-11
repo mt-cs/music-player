@@ -3,7 +3,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -13,7 +12,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
 
-public class BioServlet extends HttpServlet {
+public class BioServlet extends BaseServlet {
     /**
      * Get a request and generate a response
      * @param request HttpServletRequest
@@ -22,12 +21,11 @@ public class BioServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-        BaseServlet bs = new BaseServlet();
-        String cookieVal = bs.getCookie(request, response);
+        String cookieVal = getCookie(request, response);
         if (!cookieVal.equals("")){
             response.setContentType("text/html");
             String search = request.getParameter("artist_name");
-            String html = bs.get_html_style();
+            String html = get_html_style();
             try {
                 html += get_html(search).toString();
             } catch (ParseException e) {
@@ -35,7 +33,7 @@ public class BioServlet extends HttpServlet {
             }
             PrintWriter out = response.getWriter();
             response.setContentType("text/html");
-            out.println(bs.getContent("beat_header.html"));
+            out.println(getContent("beat_header.html"));
             out.println(html);
         } else {
             response.sendRedirect("/login");
