@@ -27,7 +27,7 @@ public class PlaylistServlet extends BaseServlet {
                         song + ", " + album + " by " + artist + " has been added to your playlist.<br></br></div></b>";
             } else {
                 resp = "<br><b><div style=\"color:SlateGray;padding-left:20px;\">" +
-                        song + " already exists.<br></br></div></b>";
+                        song + " is already in the playlist.<br></br></div></b>";
             }
 
             PrintWriter out = response.getWriter();
