@@ -47,8 +47,8 @@ public class PlaylistServlet extends BaseServlet {
      * @return true if song is added to playlist, false otherwise
      */
     public boolean addPlaylist(String song, String artist, String album) {
-        String query = "SELECT * FROM playlist WHERE song_name='" + song + "';";
-        String statement = "insert into playlist(song_name, artists_name, albums_name) values ('" +
+        String query = "SELECT * FROM playlist WHERE name='" + song + "';";
+        String statement = "insert into playlist(name, artists_name, albums_name) values ('" +
                 song + "', '" + artist + "', '" + album + "');";
         return checkDB(query, statement);
     }
