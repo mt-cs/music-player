@@ -8,6 +8,8 @@ Features:
 - Add and delete songs
 - Search artist Bio using a REST API provided by TheAudioDB
 
-![beat_play](https://user-images.githubusercontent.com/60201466/119576813-4e248300-bd6e-11eb-8d56-7f31595b4625.gif)
+https://user-images.githubusercontent.com/60201466/119745631-61555280-be43-11eb-831a-e5546d8a8beb.mov
+
+
 
 
